@@ -20,27 +20,22 @@ public class EventTest {
   @Test
   public void or() {
     //given
-
+    Event event = new Event("test", 0.3f);
     //when
-
+    Event event1 = event.or(new Event("test1", 0.2f));
     //then
+    assertThat(event1)
+        .hasFieldOrPropertyWithValue("probability", 1f - (0.2f * 0.3f) - (0.8f * 0.7f));
   }
 
   @Test
   public void not() {
     //given
-
+    Event event = new Event("test", 0.3f);
     //when
-
+    Event event1 = event.not(new Event("test1", 0.2f));
     //then
-  }
-
-  @Test
-  public void showProbability() {
-    //given
-
-    //when
-
-    //then
+    assertThat(event1)
+        .hasFieldOrPropertyWithValue("probability", (0.8f * 0.7f));
   }
 }
