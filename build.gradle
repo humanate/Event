@@ -11,9 +11,8 @@ plugins {
     id 'java-library'
     id 'java'
     id 'idea'
+    id 'jacoco'
 }
-
-compileJava {options.encoding = "UTF-8"}
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -33,4 +32,51 @@ dependencies {
 
     // AssertJ
     testCompile("org.assertj:assertj-core:3.11.1")
+}
+
+// tag::jacoco-configuration[]
+jacoco {
+    toolVersion = "0.8.4"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+// tag::testtask-configuration[]
+test {
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+}
+
+// tag::report-configuration[]
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+// end::report-configuration[]
+
+// tag::violation-rules-configuration[]
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.5
+            }
+        }
+
+        rule {
+            enabled = false
+            element = 'CLASS'
+            includes = ['org.gradle.*']
+
+            limit {
+                counter = 'LINE'
+                value = 'TOTALCOUNT'
+                maximum = 0.3
+            }
+        }
+    }
 }
